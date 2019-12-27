@@ -13,47 +13,50 @@ import java.lang.Math;
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener{
     private ArrayList<Point> draw_queue = new ArrayList<Point>();
 
-    boolean paintActive = false;
-
-    int size = 10;
+    int brushSize = 3;
+    int brush_index = 0;
+    int width, height;
     double half = 350;
     float frame = 0;
 
-    BufferedImage buffer = new BufferedImage(700, 700, BufferedImage.TYPE_INT_RGB);
+    BufferedImage buffer;
     Graphics2D canv; 
+
     public Canvas(){
-        setPreferredSize(new Dimension(700,700));
+        width = 700;
+        height = 700;
+
+        setPreferredSize(new Dimension(width,height));
         addMouseListener(this);
         addMouseMotionListener(this);
         setBackground(Color.BLACK);
         setOpaque(false);
 
-        canv = buffer.createGraphics();
+        half = (int) width/2;
+
+        buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        setup_canv(buffer);
     }
 
     @Override
     protected void paintComponent(Graphics g){
-        super.paintComponents(g);
         frame++;
         if(frame%1000 == 0)
             frame = 0;
 
-        var g2d = (Graphics2D) g;
-
-        canv.setColor(Color.getHSBColor(frame/100,1,1));
-        canv.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 
-        canv.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        applyBrush(canv);
 
         if(draw_queue.size() > 1){
             double x,y,xx,yy;
 
-            for(int i=0; i<360; i+=60){
+            for(int i=0; i<360; i+=30){
                 Point a = draw_queue.get(0);
                 Point b = draw_queue.get(1);
 
                 a = rotate(translate(a, -350), i);
                 b = rotate(translate(b, -350), i);
                 drawSeg(canv, translate(a, 350), translate(b, 350));
+
                 a = mirror(a);
                 b = mirror(b);
                 drawSeg(canv, translate(a, 350), translate(b, 350));
@@ -62,7 +65,47 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             draw_queue.remove(0);
         }
 
+        super.paintComponents(g);
+        var g2d = (Graphics2D) g;
         g2d.drawImage(buffer,0,0,null);
+    }
+
+    private void setup_canv(BufferedImage buffer){
+        canv = buffer.createGraphics();
+        canv.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 
+        canv.setStroke(new BasicStroke(brushSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+    }
+
+    private void applyBrush(Graphics2D canv){
+        switch(brush_index){
+            case 0:
+                canv.setColor(Color.getHSBColor(frame/100,1,1));
+                break;
+            case 1:
+                canv.setColor(Color.red);
+                break;
+            case 2:
+                canv.setColor(Color.green);
+                break;
+            case 3:
+                canv.setColor(Color.blue);
+                break;
+            case 4:
+                canv.setColor(Color.white);
+                break;
+            case 5:
+                canv.setColor(Color.getHSBColor(1,0,frame/100));
+                break;
+            case 6:
+                canv.setColor(Color.black);
+                break;
+            default:
+                canv.setColor(Color.white);
+        }
+    }
+
+    public void chooseBrush(int n){
+        brush_index = n;
     }
 
     private Point mirror(Point p){ 
@@ -102,8 +145,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     public void clear(){
-        buffer = new BufferedImage(700, 700, BufferedImage.TYPE_INT_RGB);
-        canv = buffer.createGraphics();
+        buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        setup_canv(buffer);
         repaint();
     }
 

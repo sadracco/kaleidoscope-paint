@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Dimension;
 import java.awt.Color;
+import java.awt.event.ItemEvent;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -28,7 +29,6 @@ public class Window extends JFrame{
         add(canvas);
 
         setTitle("Kaleidoscope");
-        setSize(800,700);
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -59,17 +59,58 @@ public class Window extends JFrame{
         var brush_menu = new JMenu("Brush");
         var brush_group = new ButtonGroup();
 
+        var brush7 = new JRadioButtonMenuItem("Black");
+        brush7.addItemListener((e) -> {
+            if(e.getStateChange()==ItemEvent.SELECTED)
+                canvas.chooseBrush(6);
+        });
+        var brush6 = new JRadioButtonMenuItem("White");
+        brush6.addItemListener((e) -> {
+            if(e.getStateChange()==ItemEvent.SELECTED)
+                canvas.chooseBrush(4);
+        });
         var brush1 = new JRadioButtonMenuItem("Rainbow");
+        brush1.setSelected(true);
+        brush1.addItemListener((e) -> {
+            if(e.getStateChange()==ItemEvent.SELECTED)
+                canvas.chooseBrush(0);
+        });
         var brush2 = new JRadioButtonMenuItem("Red");
-        var brush3 = new JRadioButtonMenuItem("Blue");
-        var brush4 = new JRadioButtonMenuItem("Green");
+        brush2.addItemListener((e) -> {
+            if(e.getStateChange()==ItemEvent.SELECTED)
+                canvas.chooseBrush(1);
+        });
+        var brush3 = new JRadioButtonMenuItem("Green");
+        brush3.addItemListener((e) -> {
+            if(e.getStateChange()==ItemEvent.SELECTED)
+                canvas.chooseBrush(2);
+        });
+        var brush4 = new JRadioButtonMenuItem("Blue");
+        brush4.addItemListener((e) -> {
+            if(e.getStateChange()==ItemEvent.SELECTED)
+                canvas.chooseBrush(3);
+        });
         var brush5 = new JRadioButtonMenuItem("Black-white");
+        brush5.addItemListener((e) -> {
+            if(e.getStateChange()==ItemEvent.SELECTED)
+                canvas.chooseBrush(5);
+        });
 
         brush_group.add(brush1);
         brush_group.add(brush2);
+        brush_group.add(brush3);
+        brush_group.add(brush4);
+        brush_group.add(brush5);
+        brush_group.add(brush6);
+        brush_group.add(brush7);
 
+        brush_menu.add(brush6);
+        brush_menu.add(brush7);
         brush_menu.add(brush1);
         brush_menu.add(brush2);
+        brush_menu.add(brush3);
+        brush_menu.add(brush4);
+        brush_menu.add(brush5);
 
         menu.add(file_menu);
         menu.add(canvas_menu);
