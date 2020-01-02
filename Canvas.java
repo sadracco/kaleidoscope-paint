@@ -4,6 +4,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
+import javax.imageio.*;
+import java.io.*;
 
 import java.util.ArrayList;
 import java.lang.Math;
@@ -13,8 +15,9 @@ import java.lang.Math;
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener{
     private ArrayList<Point> draw_queue = new ArrayList<Point>();
 
-    int brushSize = 3;
-    int brush_index = 0;
+    int brushSize = 1;
+    public int brush_index = 0;
+
     int width, height;
     double half = 350;
     float frame = 0;
@@ -148,6 +151,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         setup_canv(buffer);
         repaint();
+    }
+
+    public void saveImg(String path){
+        try{
+            File f = new File(path);
+            ImageIO.write(buffer, "PNG", f);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
